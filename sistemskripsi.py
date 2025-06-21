@@ -5,7 +5,6 @@ import math
 import random
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import tensorflow as tf
 
 from collections import Counter
@@ -14,9 +13,6 @@ from tensorflow.keras.models import load_model
 
 import warnings
 warnings.filterwarnings('ignore')
-
-# set style seaborn di streamlit
-sns.set_style('whitegrid')
 
 # judul utama
 st.title('APLIKASI SISTEM PREDIKSI CHURN PELANGGAN TELEKOMUNIKASI')
