@@ -18,6 +18,7 @@ warnings.filterwarnings('ignore')
 st.title('APLIKASI SISTEM PREDIKSI CHURN PELANGGAN TELEKOMUNIKASI')
 st.markdown('''---''')
 
+
 # baca file gambar dan encode ke base64
 file_path = "logoutm.png"
 with open(file_path, "rb") as f:
@@ -28,10 +29,13 @@ with open(file_path, "rb") as f:
 st.sidebar.markdown(
     f"""
     <div style="text-align: center;">
-        <img src="data:image/png;base64,{encoded}" width="100"><br>
-        <p style="margin-top: 5px; font-weight: bold;"> Nabila Atira Qurratul Aini </p>
+        <h4 style="margin-bottom: 30px;">IMPELENTASI MULTI-LAYER PERCEPTRON (MLP) UNTUK KLASIFIKASI CUSTOMER CHURN TELECOMMUNICATION BERDASARKAN FITUR PALING BERPENGARUH</h4>
+        <img src="data:image/png;base64,{encoded}" width="100" style="margin-bottom: 15px;"><br>
+        <p style="margin-top: 10px; font-weight: bold;"> Nabila Atira Qurratul Aini </p>
         <p style="margin-top: -10px;"> 210411100066 </p>
-        <p style="margin-top: -10px;"> Teknik Informatika </p>
+        <h4 style="margin-top: 30px; margin-bottom: -20px;">PROGRAM STUDI TEKNIK INFORMATIKA</h4>
+        <h4 style="margin-bottom: -20px;">FAKULTAS TEKNIK</h4>
+        <h4 style="margin-bottom: -20px;">UNIVERSITAS TRUNOJOYO MADURA</h4>
     </div>
     """,
     unsafe_allow_html=True
