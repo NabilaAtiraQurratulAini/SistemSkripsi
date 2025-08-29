@@ -1,15 +1,8 @@
 import streamlit as st
 import base64
 
-import math
-import random
-import numpy as np
 import pandas as pd
-import tensorflow as tf
-
-from collections import Counter
-from sklearn.neighbors import LocalOutlierFactor
-from tensorflow.keras.models import load_model
+import joblib
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -42,78 +35,12 @@ st.sidebar.markdown(
 )
 
 # membaca dataset telecommunication customer churn
-dataset = pd.read_csv('https://raw.githubusercontent.com/NabilaAtiraQurratulAini/Dataset/refs/heads/main/Dataset%20TTC%20-%20Telecommunication%20Customer%20Churn.csv')
-
-# fitur gender
-modus_gender = dataset['gender'].mode()[0]
-dataset['gender'].fillna(modus_gender, inplace=True)
-
-# fitur tenure
-mean_tenure = dataset['tenure'].mean()
-dataset['tenure'].fillna(mean_tenure, inplace=True)
-
-# fitur totalcharges
-mean_totalcharges = dataset['TotalCharges'].mean()
-dataset['TotalCharges'].fillna(mean_totalcharges, inplace=True)
-
-# tentukan kolom numerik yang akan dianalisis
-numeric_columns = dataset[['tenure', 'MonthlyCharges', 'TotalCharges']]
-
-# hitung Q1, Q3, dan IQR
-Q1 = numeric_columns.quantile(0.25)
-Q3 = numeric_columns.quantile(0.75)
-IQR = Q3 - Q1
-
-# simpan Q1 dan Q3 dari data asli
-q1_iqr = {}
-q3_iqr = {}
-for col in ['tenure', 'MonthlyCharges', 'TotalCharges']:
-    q1_iqr[col] = dataset[col].quantile(0.25)
-    q3_iqr[col] = dataset[col].quantile(0.75)
-
-st.session_state.q1_iqr = q1_iqr
-st.session_state.q3_iqr = q3_iqr
-
-# ambil hanya kolom numerik yang diinginkan
-numerical_features = dataset[['tenure', 'MonthlyCharges', 'TotalCharges']]
-
-# terapkan LOF
-lof = LocalOutlierFactor(n_neighbors=20)
-outlier_scores = lof.fit_predict(numerical_features)
-
-# buat dataframe hasil
-dataset_filtered = numerical_features.copy()
-dataset_filtered['LOF_Score'] = lof.negative_outlier_factor_
-dataset_filtered['Outlier'] = ['Yes' if x == -1 else 'No' for x in outlier_scores]
-
-# ambil data outlier saja
-outliers_only = dataset_filtered[dataset_filtered['Outlier'] == 'Yes']
-
-# hitung jumlah outlier per fitur
-outlier_counts = {feature: outliers_only[feature].count() for feature in numerical_features}
-outlier_table = pd.DataFrame(list(outlier_counts.items()), columns=['Fitur', 'Jumlah Outlier'])
-
-# tangani langsung di dataset_filtered
-fitur_asli = [col for col in numerical_features if col not in ['LOF_Score', 'Outlier']]
-
-for feature in fitur_asli:
-    mean_wajar = dataset_filtered[dataset_filtered['Outlier'] == 'No'][feature].mean()
-    dataset_filtered[feature] = dataset_filtered.apply(lambda row: mean_wajar if row['Outlier'] == 'Yes' else row[feature], axis=1)
-
-# salin dataset awal dan update nilai yang telah ditangani
-dataset_preprocessing_lof = dataset.copy()
-for feature in fitur_asli:
-    dataset_preprocessing_lof[feature] = dataset_filtered[feature]
-    
-# menambahkan lof disini
-st.session_state.lof_reference_data = dataset_preprocessing_lof[['tenure', 'MonthlyCharges', 'TotalCharges']].copy()
+# dataset = pd.read_csv('https://raw.githubusercontent.com/NabilaAtiraQurratulAini/Dataset/refs/heads/main/Dataset%20TTC%20-%20Telecommunication%20Customer%20Churn.csv')
 
 st.title("🚀 DEPLOYMENT")
 
-# pilih model
-st.markdown('<p style="font-size:25px; font-weight:bold;">🔍 PILIH MODEL</p>', unsafe_allow_html=True)
-model_option = st.selectbox("Pilih Model", ["IQR", "LOF"])
-model_path = "model_mlp_iqr.h5" if model_option == "IQR" else "model_mlp_lof.h5"
+model_path = "mlp3_iqr.pkl"
+model = joblib.load(model_path)
 
 st.markdown('<p style="font-size:20px; font-weight:bold;">📝 FORM INPUT DATA PELANGGAN</p>', unsafe_allow_html=True)
 
@@ -132,7 +59,7 @@ device_protection = st.selectbox("Device Protection", ["No", "Yes", "No internet
 tech_support = st.selectbox("Tech Support", ["No", "Yes", "No internet service"])
 streaming_tv = st.selectbox("Streaming TV", ["No", "Yes", "No internet service"])
 streaming_movies = st.selectbox("Streaming Movies", ["No", "Yes", "No internet service"])
-contract = st.selectbox("Contract", ["One year", "Two year", "Month-to-month"])
+contract = st.selectbox("Contract", ["Month-to-month", "One year", "Two year"])
 paperless_billing = st.selectbox("Paperless Billing", ["No", "Yes"])
 payment_method = st.selectbox("Payment Method", [
     "Credit card (automatic)", "Bank transfer (automatic)", "Mailed check", "Electronic check"])
@@ -164,9 +91,6 @@ input_data = {
 
 input_df = pd.DataFrame([input_data])
 
-if model_option == "IQR":
-    input_df.drop(columns=["SeniorCitizen"], inplace=True)
-
 # mapping encoding manual
 encode_map = {
     'gender': {'Female': 0, 'Male': 1},
@@ -181,7 +105,7 @@ encode_map = {
     'TechSupport': {'No': 0, 'Yes': 1, 'No internet service': 2},
     'StreamingTV': {'No': 0, 'Yes': 1, 'No internet service': 2},
     'StreamingMovies': {'No': 0, 'Yes': 1, 'No internet service': 2},
-    'Contract': {'One year': 0, 'Two year': 1, 'Month-to-month': 2},
+    'Contract': {'Month-to-month': 0, 'One year': 1, 'Two year': 2},
     'PaperlessBilling': {'No': 0, 'Yes': 1},
     'PaymentMethod': {
         'Credit card (automatic)': 0,
@@ -194,67 +118,14 @@ encode_map = {
 for col, mapping in encode_map.items():
     input_df[col] = input_df[col].map(mapping)
 
-# simpan nilai asli untuk outlier check
-original_input = input_df[['tenure', 'MonthlyCharges', 'TotalCharges']].copy()
-
-# status outlier
-st.markdown('<p style="font-size:20px; font-weight:bold;">📊 STATUS OUTLIER</p>', unsafe_allow_html=True)
-
-# iqr
-iqr_status = []
-for col in ['tenure', 'MonthlyCharges', 'TotalCharges']:
-    Q1 = st.session_state.q1_iqr[col]
-    Q3 = st.session_state.q3_iqr[col]
-    IQR = Q3 - Q1
-    lower = Q1 - 1.5 * IQR
-    upper = Q3 + 1.5 * IQR
-    val = input_df[col].values[0]
-    
-    if val < lower or val > upper:
-        iqr_status.append(col)
-
-if not iqr_status:
-    st.success("✔️ Data tidak termasuk outlier menurut IQR")
-else:
-    st.error(f"❌ Data termasuk outlier menurut IQR (fitur: {', '.join(iqr_status)})")
-
-# lof
-lof_model = LocalOutlierFactor(n_neighbors=20, novelty=True)
-lof_model.fit(st.session_state.lof_reference_data)
-lof_result = lof_model.predict(input_df[['tenure', 'MonthlyCharges', 'TotalCharges']])[0]
-
-if lof_result == 1:
-    st.success("✔️ Data tidak termasuk outlier menurut LOF")
-else:
-    # identifikasi fitur mana yang memiliki nilai ekstrem terhadap distribusi referensi
-    lof_outlier_features = []
-    for col in ['tenure', 'MonthlyCharges', 'TotalCharges']:
-        min_val = st.session_state.lof_reference_data[col].min()
-        max_val = st.session_state.lof_reference_data[col].max()
-        val = input_df[col].values[0]
-        if val < min_val or val > max_val:
-            lof_outlier_features.append(col)
-
-    if lof_outlier_features:
-        st.error(f"❌ Data termasuk outlier menurut LOF (fitur: {', '.join(lof_outlier_features)})")
-    else:
-        st.error("❌ Data termasuk outlier menurut LOF")
-
-# prediksi
+# prediksi dengan scikit-learn MLPClassifier
 if st.button("🔮 Prediksi"):
     try:
-        model = load_model(model_path, compile=False)
+        prob = model.predict_proba(input_df)[0][1]
+        label = model.predict(input_df)[0]
+        label_text = "Churn" if label == 1 else "Tidak Churn"
 
-        # pastikan fitur sesuai expected_features = 18
-        expected_features = 18 if model_option == "IQR" else 19
-        if input_df.shape[1] != expected_features:
-            st.error(f"❌ Jumlah fitur tidak sesuai: model butuh {expected_features}, input punya {input_df.shape[1]}")
-            st.stop()
-
-        prob = model.predict(input_df)[0][0]
-        label = "Churn" if prob > 0.5 else "Tidak Churn"
-
-        st.success(f"🔣 Hasil Prediksi: **{label}**")
-        st.info(f"🌟 Probabilitas Churn: **{prob:.2%}**")
+        st.success(f"🔣 Prediksi: **{label_text}**")
+        st.metric(label="Probabilitas Churn", value=f"{prob:.2%}")
     except Exception as e:
         st.error(f"Terjadi kesalahan saat memuat model: {e}")
