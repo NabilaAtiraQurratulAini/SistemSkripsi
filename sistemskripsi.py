@@ -127,3 +127,4 @@ if st.button("🔮 Prediksi"):
         st.metric(label="Probabilitas Churn", value=f"{prob:.2%}")
     except Exception as e:
         st.error(f"Terjadi kesalahan saat memuat model: {e}")
+
