@@ -129,7 +129,8 @@ if st.button("🔮 Prediksi"):
         label = model.predict(input_df)[0]
         label_text = "Churn" if label == 1 else "Tidak Churn"
 
-        st.success(f"🔣 Prediksi: **{label_text}**")
-        st.metric(label="Probabilitas Churn", value=f"{prob:.2%}")
+        st.success(f"🔣 Hasil Prediksi: **{label_text}**")
+        st.metric(label="🌟 Probabilitas Churn: ", value=f"**{prob:.2%}**")
     except Exception as e:
         st.error(f"Terjadi kesalahan saat memuat model: {e}")
+
