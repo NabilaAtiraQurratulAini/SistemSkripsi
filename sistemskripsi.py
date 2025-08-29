@@ -44,7 +44,7 @@ st.markdown('<p style="font-size:20px; font-weight:bold;">📝 FORM INPUT DATA P
 
 # input asli dari user
 gender = st.selectbox("Gender", ["Female", "Male"])
-senior_citizen = st.radio("SeniorCitizen", [0, 1])
+senior_citizen = st.radio("Senior Citizen", [0, 1])
 partner = st.selectbox("Partner", ["No", "Yes"])
 dependents = st.selectbox("Dependents", ["No", "Yes"])
 tenure = st.number_input("Tenure (dalam bulan)", min_value=0.0)
@@ -127,4 +127,5 @@ if st.button("🔮 Prediksi"):
         st.metric(label="Probabilitas Churn", value=f"{prob:.2%}")
     except Exception as e:
         st.error(f"Terjadi kesalahan saat memuat model: {e}")
+
 
