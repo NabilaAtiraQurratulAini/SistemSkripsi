@@ -116,6 +116,12 @@ encode_map = {
 for col, mapping in encode_map.items():
     input_df[col] = input_df[col].map(mapping)
 
+# drop fitur yang tidak dipakai model MLP3_IQR
+drop_features = ["Dependents", "MultipleLines"]
+for col in drop_features:
+    if col in input_df.columns:
+        input_df.drop(columns=[col], inplace=True)
+
 # prediksi dengan scikit-learn MLPClassifier
 if st.button("🔮 Prediksi"):
     try:
@@ -127,5 +133,3 @@ if st.button("🔮 Prediksi"):
         st.metric(label="Probabilitas Churn", value=f"{prob:.2%}")
     except Exception as e:
         st.error(f"Terjadi kesalahan saat memuat model: {e}")
-
-
