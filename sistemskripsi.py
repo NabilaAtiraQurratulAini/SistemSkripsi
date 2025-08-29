@@ -2,7 +2,7 @@ import streamlit as st
 import base64
 
 import pandas as pd
-import joblib
+import pickle
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -10,7 +10,6 @@ warnings.filterwarnings('ignore')
 # judul utama
 st.title('APLIKASI SISTEM PREDIKSI CHURN PELANGGAN TELEKOMUNIKASI')
 st.markdown('''---''')
-
 
 # baca file gambar dan encode ke base64
 file_path = "logoutm.png"
@@ -34,13 +33,12 @@ st.sidebar.markdown(
     unsafe_allow_html=True
 )
 
-# membaca dataset telecommunication customer churn
-# dataset = pd.read_csv('https://raw.githubusercontent.com/NabilaAtiraQurratulAini/Dataset/refs/heads/main/Dataset%20TTC%20-%20Telecommunication%20Customer%20Churn.csv')
-
 st.title("🚀 DEPLOYMENT")
 
+# === load model dengan pickle ===
 model_path = "mlp3_iqr.pkl"
-model = joblib.load(model_path)
+with open(model_path, "rb") as f:
+    model = pickle.load(f)
 
 st.markdown('<p style="font-size:20px; font-weight:bold;">📝 FORM INPUT DATA PELANGGAN</p>', unsafe_allow_html=True)
 
