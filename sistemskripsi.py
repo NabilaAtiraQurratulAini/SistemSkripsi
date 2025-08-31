@@ -46,10 +46,10 @@ st.markdown('<p style="font-size:20px; font-weight:bold;">📝 FORM INPUT DATA P
 gender = st.selectbox("Gender", ["Female", "Male"])
 senior_citizen = st.radio("Senior Citizen", [0, 1])
 partner = st.selectbox("Partner", ["No", "Yes"])
-dependents = st.selectbox("Dependents", ["No", "Yes"])
+# dependents = st.selectbox("Dependents", ["No", "Yes"])
 tenure = st.number_input("Tenure (dalam bulan)", min_value=0.0)
 phone_service = st.selectbox("Phone Service", ["No", "Yes"])
-multiple_lines = st.selectbox("Multiple Lines", ["No", "Yes", "No phone service"])
+# multiple_lines = st.selectbox("Multiple Lines", ["No", "Yes", "No phone service"])
 internet_service = st.selectbox("Internet Service", ["No", "DSL", "Fiber optic"])
 online_security = st.selectbox("Online Security", ["No", "Yes", "No internet service"])
 online_backup = st.selectbox("Online Backup", ["No", "Yes", "No internet service"])
@@ -133,3 +133,4 @@ if st.button("🔮 Prediksi"):
         st.info(f"🌟 Probabilitas Churn: **{prob:.2%}**")
     except Exception as e:
         st.error(f"Terjadi kesalahan saat memuat model: {e}")
+
