@@ -69,10 +69,10 @@ input_data = {
     "gender": gender,
     "SeniorCitizen": senior_citizen,
     "Partner": partner,
-    "Dependents": dependents,
+    # "Dependents": dependents,
     "tenure": tenure,
     "PhoneService": phone_service,
-    "MultipleLines": multiple_lines,
+    # "MultipleLines": multiple_lines,
     "InternetService": internet_service,
     "OnlineSecurity": online_security,
     "OnlineBackup": online_backup,
@@ -93,9 +93,9 @@ input_df = pd.DataFrame([input_data])
 encode_map = {
     'gender': {'Female': 0, 'Male': 1},
     'Partner': {'No': 0, 'Yes': 1},
-    'Dependents': {'No': 0, 'Yes': 1},
+    # 'Dependents': {'No': 0, 'Yes': 1},
     'PhoneService': {'No': 0, 'Yes': 1},
-    'MultipleLines': {'No': 0, 'Yes': 1, 'No phone service': 2},
+    # 'MultipleLines': {'No': 0, 'Yes': 1, 'No phone service': 2},
     'InternetService': {'No': 0, 'DSL': 1, 'Fiber optic': 2},
     'OnlineSecurity': {'No': 0, 'Yes': 1, 'No internet service': 2},
     'OnlineBackup': {'No': 0, 'Yes': 1, 'No internet service': 2},
@@ -117,10 +117,10 @@ for col, mapping in encode_map.items():
     input_df[col] = input_df[col].map(mapping)
 
 # drop fitur yang tidak dipakai model MLP3_IQR
-drop_features = ["Dependents", "MultipleLines"]
-for col in drop_features:
-    if col in input_df.columns:
-        input_df.drop(columns=[col], inplace=True)
+# drop_features = ["Dependents", "MultipleLines"]
+# for col in drop_features:
+    # if col in input_df.columns:
+        # input_df.drop(columns=[col], inplace=True)
 
 # prediksi dengan scikit-learn MLPClassifier
 if st.button("🔮 Prediksi"):
@@ -133,4 +133,5 @@ if st.button("🔮 Prediksi"):
         st.info(f"🌟 Probabilitas Churn: **{prob:.2%}**")
     except Exception as e:
         st.error(f"Terjadi kesalahan saat memuat model: {e}")
+
 
