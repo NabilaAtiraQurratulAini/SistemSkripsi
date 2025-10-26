@@ -36,7 +36,7 @@ st.sidebar.markdown(
 st.title("🚀 DEPLOYMENT")
 
 # === load model dengan pickle ===
-model_path = "mlp3_iqr.pkl"
+model_path = "mlp10_iqr.pkl"
 with open(model_path, "rb") as f:
     model = pickle.load(f)
 
@@ -133,5 +133,6 @@ if st.button("🔮 Prediksi"):
         st.info(f"🌟 Probabilitas Churn: **{prob:.2%}**")
     except Exception as e:
         st.error(f"Terjadi kesalahan saat memuat model: {e}")
+
 
 
