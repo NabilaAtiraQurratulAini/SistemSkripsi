@@ -56,7 +56,7 @@ online_backup = st.selectbox("Online Backup", ["No", "Yes", "No internet service
 device_protection = st.selectbox("Device Protection", ["No", "Yes", "No internet service"])
 tech_support = st.selectbox("Tech Support", ["No", "Yes", "No internet service"])
 # streaming_tv = st.selectbox("Streaming TV", ["No", "Yes", "No internet service"])
-streaming_movies = st.selectbox("Streaming Movies", ["No", "Yes", "No internet service"])
+# streaming_movies = st.selectbox("Streaming Movies", ["No", "Yes", "No internet service"])
 contract = st.selectbox("Contract", ["Month-to-month", "One year", "Two year"])
 # paperless_billing = st.selectbox("Paperless Billing", ["No", "Yes"])
 payment_method = st.selectbox("Payment Method", [
@@ -79,7 +79,7 @@ input_data = {
     "DeviceProtection": device_protection,
     "TechSupport": tech_support,
     # "StreamingTV": streaming_tv,
-    "StreamingMovies": streaming_movies,
+    # "StreamingMovies": streaming_movies,
     "Contract": contract,
     # "PaperlessBilling": paperless_billing,
     "PaymentMethod": payment_method,
@@ -102,7 +102,7 @@ encode_map = {
     'DeviceProtection': {'No': 0, 'Yes': 1, 'No internet service': 2},
     'TechSupport': {'No': 0, 'Yes': 1, 'No internet service': 2},
     # 'StreamingTV': {'No': 0, 'Yes': 1, 'No internet service': 2},
-    'StreamingMovies': {'No': 0, 'Yes': 1, 'No internet service': 2},
+    # 'StreamingMovies': {'No': 0, 'Yes': 1, 'No internet service': 2},
     'Contract': {'Month-to-month': 0, 'One year': 1, 'Two year': 2},
     # 'PaperlessBilling': {'No': 0, 'Yes': 1},
     'PaymentMethod': {
@@ -133,6 +133,7 @@ if st.button("🔮 Prediksi"):
         st.info(f"🌟 Probabilitas Churn: **{prob:.2%}**")
     except Exception as e:
         st.error(f"Terjadi kesalahan saat memuat model: {e}")
+
 
 
 
